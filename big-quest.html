@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Quest RPG ToDo</title>
+
+    <!-- Шрифт -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: Inter, Arial;
+            background: radial-gradient(circle at center, #0a0f1f, #030611);
+            color: #e6f1ff;
+            margin: 0;
+            padding: 40px;
+        }
+
+        .app {
+            max-width: 700px;
+            margin: auto;
+        }
+
+        .panel {
+            background: rgba(20, 30, 60, 0.6);
+            border: 1px solid rgba(100,150,255,0.2);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+        }
+
+        .xp-bar {
+            width: 100%;
+            height: 16px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 10px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+
+        .xp-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #4ade80, #22d3ee);
+            transition: 0.4s;
+        }
+
+        input {
+            background: rgba(20,30,60,0.6);
+            border: 1px solid rgba(100,150,255,0.2);
+            padding: 10px;
+            border-radius: 10px;
+            color: white;
+            width: 65%;
+        }
+
+        button {
+            background: linear-gradient(135deg, #6366f1, #22d3ee);
+            border: none;
+            padding: 10px 16px;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 20px rgba(80,150,255,0.5);
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            margin: 12px 0;
+            padding: 8px;
+            background: rgba(30, 40, 70, 0.6);
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: 0.2s;
+        }
+
+        li.done {
+            text-decoration: line-through;
+            opacity: 0.6;
+            background: rgba(50, 50, 50, 0.5);
+        }
+
+        li button {
+            padding: 6px 12px;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app">
+
+        <!-- HUD / Панель игрока -->
+        <div class="panel">
+            <h2>🎮 Игрок</h2>
+            <div>Уровень: <span id="level">1</span></div>
+            <div class="xp-bar"><div class="xp-fill" id="xpFill"></div></div>
+            <div>XP: <span id="xp">0</span></div>
+        </div>
+
+        <!-- Добавление квеста -->
+        <input id="taskInput" placeholder="Введите квест">
+        <button onclick="addTask()">Добавить квест</button>
+
+        <!-- Список квестов -->
+        <ul id="taskList"></ul>
+    </div>
+
+    <script>
+        let xp = 0;
+        let level = 1;
+
+        function addTask() {
+            let text = document.getElementById("taskInput").value;
+            if (text === "") return;
+
+            let li = document.createElement("li");
+
+            // Рандомный XP за квест
+            let questXp = Math.floor(Math.random() * 20) + 10;
+
+            li.innerHTML = text + " (XP: " + questXp + ") ";
+
+            // Кнопка «Выполнено»
+            let doneBtn = document.createElement("button");
+            doneBtn.textContent = "Выполнено";
+
+            doneBtn.onclick = function() {
+                if (!li.classList.contains("done")) {
+                    li.classList.add("done");
+
+                    xp += questXp;
+
+                    if (xp >= level * 100) {
+                        xp = xp - level * 100;
+                        level++;
+                    }
+
+                    updateStats();
+                }
+            };
+
+            li.appendChild(doneBtn);
+            document.getElementById("taskList").appendChild(li);
+
+            document.getElementById("taskInput").value = "";
+        }
+
+        function updateStats() {
+            document.getElementById("xp").textContent = xp;
+            document.getElementById("level").textContent = level;
+
+            let percent = (xp / (level * 100)) * 100;
+            document.getElementById("xpFill").style.width = percent + "%";
+        }
+    </script>
+</body>
+</html>
